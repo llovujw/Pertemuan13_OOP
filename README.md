@@ -1,6 +1,15 @@
 # Pertemuan13_OOP
 
-Main.java
+## Profil
+| Variable | Isi |
+| -------- | --- |
+| **Nama** | Intan Virginia Aulia Putri |
+| **NIM** | 312310657 |
+| **Kelas** | TI.23.A.6 |
+| **Mata Kuliah** | Pemrograman Orientasi Objek |
+| **Link vidio Penjelasan** | https://youtu.be/JPookoV-kI8?si=9h4M9rgHWoWRDmLv |
+
+# Main.java
 ``` Java
 import classes.Database;
 import controller.MahasiswaController;
@@ -25,7 +34,7 @@ public class Main {
 }
 ```
 
-TestConnection.java
+# TestConnection.java
 ``` Java
 // TestConnection.java
 import classes.Database;
@@ -45,8 +54,7 @@ public class TestConnection {
 }
 ```
 
-### Classes
-BaseModel.java
+# BaseModel.java
 ``` Java
 package classes;
 
@@ -67,8 +75,31 @@ public abstract class BaseModel<T> {
     public abstract boolean delete(int id) throws SQLException;
 }
 ```
+### Tujuan
+Kelas BaseModel adalah kelas dasar untuk semua model data seperti Mahasiswa dan Nilai. Kelas ini menyediakan metode-metode dasar untuk berinteraksi dengan database, sehingga kode menjadi lebih modular dan mudah dipelihara.
 
-Database.java
+### Metode-Metode
+- **findAll()**
+  - Mengambil semua data dari tabel yang sesuai di database.
+- **findById(int id)**
+  - Mencari data berdasarkan ID.
+- **insert(T object)**
+  - Menambahkan data baru ke dalam tabel.
+- **update(T object)**
+  - Memperbarui data yang sudah ada.
+- **delete(int id)**
+  - Menghapus data berdasarkan ID.
+
+### Pentingnya
+Kelas ini membuat kode menjadi lebih modular dan mudah dipelihara karena logika dasar untuk berinteraksi dengan database sudah terdefinisi di sini. Dengan memanfaatkan kelas BaseModel:
+- Duplikasi kode dapat diminimalkan.
+- Pembaruan dan pemeliharaan kode menjadi lebih mudah.
+- Struktur yang konsisten diterapkan untuk setiap model data.
+
+### Analogi
+Kelas BaseModel dapat diibaratkan seperti cetak biru untuk semua kelas model data. Bayangkan kelas ini sebagai kerangka rumah yang sudah siap. Kelas seperti MahasiswaModel dan NilaiModel adalah rumah-rumah yang dibangun di atas kerangka tersebut. Setiap rumah memiliki desain interior yang berbeda (atribut dan metode), tetapi semuanya memiliki struktur dasar yang sama (metode seperti findAll, findById, dan lainnya).
+
+# Database.java
 ``` Java
 package classes;
 
@@ -90,6 +121,22 @@ public class Database {
     }
 }
 ```
+### Tujuan
+Bertanggung jawab untuk membuat koneksi ke database MySQL.
+
+### Metode
+- **getConnection()**
+  - Metode ini akan mencoba menghubungkan aplikasi dengan database menggunakan informasi yang diberikan (URL, username, password).
+  - Jika koneksi berhasil, maka akan dikembalikan objek Connection yang dapat digunakan untuk menjalankan query SQL.
+
+### Pentingnya
+Kelas ini adalah pintu gerbang untuk aplikasi kita berinteraksi dengan data yang tersimpan di database. Dengan kelas ini:
+- Aplikasi dapat mengambil data dari database.
+- Data baru dapat disimpan dengan mudah.
+- Proses koneksi menjadi terpusat dan terorganisir.
+
+### Analogi
+Kelas Database ini seperti kunci untuk membuka pintu ke gudang data kita. Dengan menggunakan kelas ini, kita bisa mengambil data yang kita butuhkan dari gudang tersebut atau menyimpan data baru ke dalamnya. Proses menghubungkan ke database ini mirip seperti memasukkan kunci ke lubang kunci dan membuka pintu.
 
 RowMapper.java
 ``` Java
@@ -103,8 +150,7 @@ public interface RowMapper<T> {
 }
 ```
 
-### controller
-MahasiswaController.java
+# MahasiswaController.java
 ``` Java
 package controller;
 
@@ -216,7 +262,7 @@ public class MahasiswaController {
 }
 ```
 
-Nilai Controller.java
+# Nilai Controller.java
 ``` Java
 package controller;
 
@@ -380,8 +426,7 @@ public class NilaiController {
 }
 ```
 
-### Model
-Mahasiswa.java
+# Mahasiswa.java
 ``` Java
 package model;
 
@@ -420,7 +465,7 @@ public class Mahasiswa {
 }
 ```
 
-MahasiswaModel.java
+# MahasiswaModel.java
 ``` Java
 package model;
 
@@ -505,7 +550,7 @@ public class MahasiswaModel extends BaseModel<Mahasiswa> {
 }
 ```
 
-Nilai.java
+# Nilai.java
 ``` Java
 package model;
 
@@ -544,7 +589,7 @@ public class Nilai {
 }
 ```
 
-NilaiModel.java
+# NilaiModel.java
 ``` Java
 package model;
 
@@ -643,8 +688,7 @@ public class NilaiModel extends BaseModel<Nilai> {
 }
 ```
 
-### View
-FormMahasiswa.java
+# FormMahasiswa.java
 ``` Java
 package view;
 
@@ -780,7 +824,7 @@ public class FormMahasiswa extends JFrame {
 }
 ```
 
-FormNilai.java
+# FormNilai.java
 ``` Java
 package view;
 
