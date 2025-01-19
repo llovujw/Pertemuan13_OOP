@@ -7,7 +7,7 @@
 | **NIM** | 312310657 |
 | **Kelas** | TI.23.A.6 |
 | **Mata Kuliah** | Pemrograman Orientasi Objek |
-| **Link vidio Penjelasan** | https://youtu.be/JPookoV-kI8?si=9h4M9rgHWoWRDmLv |
+| **Link vidio Penjelasan** | [https://youtu.be/pOxdVMJguDI?si=iCp3rBvu8TWrRsuN] |
 
 # Main.java
 ``` Java
