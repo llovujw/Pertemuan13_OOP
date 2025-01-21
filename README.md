@@ -9,50 +9,21 @@
 | **Mata Kuliah** | Pemrograman Orientasi Objek |
 | **Link vidio Penjelasan** | [https://youtu.be/pOxdVMJguDI?si=iCp3rBvu8TWrRsuN] |
 
-# Main.java
-``` Java
-import classes.Database;
-import controller.MahasiswaController;
-import java.sql.Connection;
-import model.MahasiswaModel;
-import view.FormMahasiswa;
+# MVC (Model-View-Controller) dengan Pendekatan OOP
 
-public class Main {
-    public static void main(String[] args) {
-        try {
-            Connection connection = Database.getConnection();
-            MahasiswaModel model = new MahasiswaModel(connection);
-            FormMahasiswa view = new FormMahasiswa();
-            MahasiswaController controller = new MahasiswaController(model, view, connection);
-            
-            view.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-}
-```
+## Apa itu MVC?
 
-# TestConnection.java
-``` Java
-// TestConnection.java
-import classes.Database;
-import java.sql.Connection;
+# MVC (Model-View-Controller)
 
-public class TestConnection {
-    public static void main(String[] args) {
-        try {
-            Connection conn = Database.getConnection();
-            System.out.println("Koneksi berhasil!");
-            conn.close();
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-}
-```
+MVC adalah sebuah pola desain arsitektur yang populer dalam pengembangan perangkat lunak. Singkatnya, MVC adalah cara untuk memisahkan logika aplikasi menjadi tiga komponen utama:
+
+- **Model**: Mewakili data dan logika bisnis aplikasi. Ini adalah bagian "otak" dari aplikasi, yang mengelola data dan melakukan perhitungan.
+- **View**: Menampilkan data kepada pengguna dalam bentuk antarmuka pengguna (user interface). View tidak memiliki logika, hanya menampilkan data yang diberikan oleh model.
+- **Controller**: Menjembatani antara model dan view. Controller menerima input dari pengguna, memproses input tersebut, dan kemudian memperbarui model atau view sesuai kebutuhan.
+
+# Aplikasi Pengelolaan Data Mahasiswa
+Aplikasi ini adalah aplikasi sederhana yang saya buat untuk mengelola data mahasiswa dan nilai mereka menggunakan **database MySQL**. Aplikasi ini dirancang untuk mempermudah pencatatan data mahasiswa seperti nama, NIM, program studi, serta pengelolaan nilai mereka dalam berbagai mata kuliah.  
+Fokus utama dari aplikasi ini adalah memberikan solusi sederhana namun efektif untuk manajemen data, dengan fitur-fitur dasar seperti menambah, mengedit, menghapus, dan menampilkan data secara langsung.
 
 # BaseModel.java
 ``` Java
@@ -75,29 +46,26 @@ public abstract class BaseModel<T> {
     public abstract boolean delete(int id) throws SQLException;
 }
 ```
-### Tujuan
-Kelas BaseModel adalah kelas dasar untuk semua model data seperti Mahasiswa dan Nilai. Kelas ini menyediakan metode-metode dasar untuk berinteraksi dengan database, sehingga kode menjadi lebih modular dan mudah dipelihara.
+### **Penjelasan BaseModel.java**  
 
-### Metode-Metode
-- **findAll()**
-  - Mengambil semua data dari tabel yang sesuai di database.
-- **findById(int id)**
-  - Mencari data berdasarkan ID.
-- **insert(T object)**
-  - Menambahkan data baru ke dalam tabel.
-- **update(T object)**
-  - Memperbarui data yang sudah ada.
-- **delete(int id)**
-  - Menghapus data berdasarkan ID.
+`BaseModel` adalah class abstrak yang menjadi kerangka dasar untuk mengelola operasi database menggunakan Java.  
 
-### Pentingnya
-Kelas ini membuat kode menjadi lebih modular dan mudah dipelihara karena logika dasar untuk berinteraksi dengan database sudah terdefinisi di sini. Dengan memanfaatkan kelas BaseModel:
-- Duplikasi kode dapat diminimalkan.
-- Pembaruan dan pemeliharaan kode menjadi lebih mudah.
-- Struktur yang konsisten diterapkan untuk setiap model data.
+#### **Elemen Penting**  
+1. **`protected Connection connection`**  
+   - Menyimpan koneksi ke database, diakses oleh class turunan.  
 
-### Analogi
-Kelas BaseModel dapat diibaratkan seperti cetak biru untuk semua kelas model data. Bayangkan kelas ini sebagai kerangka rumah yang sudah siap. Kelas seperti MahasiswaModel dan NilaiModel adalah rumah-rumah yang dibangun di atas kerangka tersebut. Setiap rumah memiliki desain interior yang berbeda (atribut dan metode), tetapi semuanya memiliki struktur dasar yang sama (metode seperti findAll, findById, dan lainnya).
+2. **Konstruktor**  
+   - **`BaseModel(Connection connection)`**: Menginisialisasi koneksi database.  
+
+3. **Method Abstrak**  
+   - **`findAll()`**: Mengambil semua data.  
+   - **`findById(int id)`**: Mengambil data berdasarkan ID.  
+   - **`insert(T object)`**: Menambahkan data baru.  
+   - **`update(T object)`**: Memperbarui data.  
+   - **`delete(int id)`**: Menghapus data berdasarkan ID.  
+
+#### **Fungsi Utama**  
+- Digunakan sebagai kerangka CRUD untuk tabel database, memungkinkan reusabilitas dan modularitas kode.
 
 # Database.java
 ``` Java
@@ -121,22 +89,25 @@ public class Database {
     }
 }
 ```
-### Tujuan
-Bertanggung jawab untuk membuat koneksi ke database MySQL.
+### **Penjelasan Database.java**  
 
-### Metode
-- **getConnection()**
-  - Metode ini akan mencoba menghubungkan aplikasi dengan database menggunakan informasi yang diberikan (URL, username, password).
-  - Jika koneksi berhasil, maka akan dikembalikan objek Connection yang dapat digunakan untuk menjalankan query SQL.
+`Database` adalah class utilitas yang bertanggung jawab untuk mengelola koneksi ke database MySQL.  
 
-### Pentingnya
-Kelas ini adalah pintu gerbang untuk aplikasi kita berinteraksi dengan data yang tersimpan di database. Dengan kelas ini:
-- Aplikasi dapat mengambil data dari database.
-- Data baru dapat disimpan dengan mudah.
-- Proses koneksi menjadi terpusat dan terorganisir.
+#### **Elemen Utama**  
+1. **Konstanta**  
+   - **`DRIVER`**: Nama driver JDBC untuk MySQL.  
+   - **`URL`**: Alamat database (dalam contoh ini, database bernama `akademik` di localhost).  
+   - **`USERNAME`** dan **`PASSWORD`**: Kredensial untuk mengakses database.  
 
-### Analogi
-Kelas Database ini seperti kunci untuk membuka pintu ke gudang data kita. Dengan menggunakan kelas ini, kita bisa mengambil data yang kita butuhkan dari gudang tersebut atau menyimpan data baru ke dalamnya. Proses menghubungkan ke database ini mirip seperti memasukkan kunci ke lubang kunci dan membuka pintu.
+2. **Method `getConnection()`**  
+   - Menginisialisasi koneksi ke database.  
+   - **`Class.forName(DRIVER)`**: Memuat driver JDBC.  
+   - **`DriverManager.getConnection(URL, USERNAME, PASSWORD)`**: Membuat dan mengembalikan koneksi ke database.  
+   - **`ClassNotFoundException`**: Ditangani jika driver JDBC tidak ditemukan.  
+
+#### **Fungsi Utama**  
+- Memberikan koneksi yang siap digunakan untuk operasi database.  
+- Menyederhanakan pengelolaan koneksi dalam aplikasi.
 
 RowMapper.java
 ``` Java
@@ -149,6 +120,21 @@ public interface RowMapper<T> {
     T mapRow(ResultSet rs) throws SQLException;
 }
 ```
+### **Penjelasan RowMapper.java**  
+
+`RowMapper` adalah sebuah interface yang digunakan untuk memetakan baris data dari hasil query SQL (`ResultSet`) ke dalam objek Java.  
+
+#### **Elemen Utama**  
+1. **Method `mapRow(ResultSet rs)`**  
+   - **Parameter**:  
+     - `ResultSet rs`: Objek yang berisi hasil query SQL.  
+   - **Output**:  
+     - Mengembalikan objek generik (`<T>`) yang merepresentasikan satu baris data dari database.  
+   - **Throws**:  
+     - `SQLException` jika terjadi kesalahan saat membaca data dari `ResultSet`.  
+
+#### **Fungsi Utama**  
+- Digunakan untuk memisahkan logika pemetaan data dari hasil query ke objek Java, membuat kode lebih modular dan bersih.  
 
 # MahasiswaController.java
 ``` Java
@@ -261,6 +247,60 @@ public class MahasiswaController {
     }
 }
 ```
+### **Penjelasan MahasiswaController.java**
+
+`MahasiswaController` adalah class yang berperan sebagai **controller** dalam pola desain **MVC** (Model-View-Controller). Class ini menjembatani interaksi antara **view** (`FormMahasiswa`) dan **model** (`MahasiswaModel`) untuk mengelola data mahasiswa.
+
+#### **Komponen Utama**
+
+1. **Atribut**
+   - **`MahasiswaModel model`**: Objek model yang digunakan untuk operasi database (CRUD) terkait mahasiswa.
+   - **`FormMahasiswa view`**: Objek view (antarmuka pengguna) untuk menampilkan data mahasiswa.
+   - **`Connection connection`**: Koneksi ke database untuk operasi model.
+
+2. **Konstruktor**
+   - **`MahasiswaController(MahasiswaModel model, FormMahasiswa view, Connection connection)`**:
+     - Menginisialisasi **model**, **view**, dan **connection**.
+     - Menyambungkan event handler (aksi tombol pada view) ke method controller, seperti `saveMahasiswa`, `deleteMahasiswa`, dll.
+     - Memuat data awal ke tabel menggunakan `refreshTable()`.
+
+3. **Method Utama**
+   - **`saveMahasiswa()`**:
+     - Menyimpan atau memperbarui data mahasiswa.
+     - Mengambil data mahasiswa dari form (`view.getMahasiswa()`), lalu memanggil method **`insert`** atau **`update`** dari model.
+
+   - **`deleteMahasiswa()`**:
+     - Menghapus data mahasiswa berdasarkan ID yang dipilih (`view.getSelectedMahasiswaId()`).
+     - Memanggil method **`delete`** dari model.
+
+   - **`clearForm()`**:
+     - Menghapus input pada form mahasiswa.
+
+   - **`refreshTable()`**:
+     - Mengambil semua data mahasiswa dari database (`model.findAll()`) dan memperbarui tampilan tabel di view (`view.setMahasiswas()`).
+
+   - **`showNilai()`**:
+     - Menampilkan form nilai (`FormNilai`) untuk mahasiswa yang dipilih.
+     - Membuat objek **`NilaiModel`** dan **`NilaiController`** untuk mengelola data nilai terkait mahasiswa.
+
+#### **Fungsi Utama**
+- Mengelola interaksi antara pengguna (via **FormMahasiswa**) dan data mahasiswa (via **MahasiswaModel**).
+- Memastikan data selalu sinkron antara database dan tampilan.
+
+#### **Catatan Tambahan**
+1. **Event Listener pada View**  
+   Konstruktor menambahkan **event listener** untuk menangani aksi tombol pada form:
+   - **`addSaveListener`** → Tombol Simpan.
+   - **`addDeleteListener`** → Tombol Hapus.
+   - **`addClearListener`** → Tombol Clear.
+   - **`addNilaiListener`** → Tombol Lihat Nilai.
+
+2. **Error Handling**  
+   Menggunakan **try-catch** untuk menangani error yang mungkin terjadi, seperti kegagalan database atau data tidak valid.
+
+3. **Integrasi dengan Form Nilai**
+   - **`FormNilai`** digunakan untuk menampilkan data nilai mahasiswa yang dipilih.
+   - Controller ini membuat dan mengelola instance **`NilaiController`** dan **`NilaiModel`** untuk mengelola nilai.
 
 # Nilai Controller.java
 ``` Java
@@ -425,6 +465,57 @@ public class NilaiController {
     }
 }
 ```
+### **Penjelasan NilaiController.java**
+
+`NilaiController` adalah class controller yang mengelola interaksi antara **view** (`FormNilai`) dan **model** (`NilaiModel`) dalam pengelolaan data nilai mahasiswa. Controller ini memastikan data nilai mahasiswa ditampilkan, disimpan, diperbarui, dan dihapus dengan benar.
+
+#### **Komponen Utama**
+
+1. **Atribut**
+   - **`NilaiModel model`**: Objek model untuk melakukan operasi database terkait data nilai.
+   - **`FormNilai view`**: Objek view untuk menampilkan dan mengelola data nilai melalui antarmuka pengguna.
+   - **`int mahasiswaId`**: ID mahasiswa yang nilainya sedang dikelola.
+
+2. **Konstruktor**
+   - **`NilaiController(NilaiModel model, FormNilai view, int mahasiswaId)`**:
+     - Menginisialisasi **model**, **view**, dan **mahasiswaId**.
+     - Menambahkan event handler untuk tombol aksi di form (simpan, hapus, dan clear).
+     - Memuat data nilai ke tabel melalui method `refreshTable()`.
+
+3. **Method Utama**
+   - **`saveNilai()`**:
+     - Menyimpan data nilai baru atau memperbarui data nilai yang sudah ada.
+     - Melakukan validasi data input, seperti:
+       - **Mata Kuliah** tidak boleh kosong.
+       - **Semester** tidak boleh kosong.
+       - **Nilai** harus dalam rentang 0-100.
+     - Menampilkan pesan sukses atau error menggunakan **`JOptionPane`**.
+
+   - **`deleteNilai()`**:
+     - Menghapus data nilai berdasarkan ID yang dipilih.
+     - Meminta konfirmasi pengguna sebelum menghapus data.
+
+   - **`clearForm()`**:
+     - Membersihkan semua input pada form nilai.
+
+   - **`refreshTable()`**:
+     - Memuat data nilai mahasiswa berdasarkan `mahasiswaId`.
+     - Mengambil data dari database (`model.findByMahasiswaId()`) dan memperbarui tabel di view (`view.setNilaiList()`).
+
+#### **Fungsi Utama**
+- Memastikan sinkronisasi antara data nilai di database dan tampilan pengguna.
+- Memvalidasi input pengguna sebelum menyimpan atau memperbarui data.
+- Menangani semua operasi pengelolaan nilai seperti tambah, edit, dan hapus dengan mudah.
+
+#### **Catatan Tambahan**
+1. **Validasi Data Input**
+   - Validasi seperti **Mata Kuliah tidak boleh kosong** dan **Nilai harus dalam rentang 0-100** menjaga agar data yang masuk ke database valid.
+
+2. **Konfirmasi Pengguna**
+   - Sebelum melakukan penghapusan atau pembaruan, controller meminta konfirmasi dari pengguna untuk mencegah kesalahan.
+
+3. **Error Handling**
+   - Menggunakan **try-catch** untuk menangkap dan menampilkan error yang mungkin terjadi selama operasi database.
 
 # Mahasiswa.java
 ``` Java
@@ -464,6 +555,84 @@ public class Mahasiswa {
     public void setAngkatan(String angkatan) { this.angkatan = angkatan; }
 }
 ```
+
+# Nilai.java
+``` Java
+package model;
+
+public class Nilai {
+    private int id;
+    private int mahasiswaId;
+    private String mataKuliah;
+    private String semester;
+    private int nilai;
+    
+    public Nilai() {}
+    
+    public Nilai(int id, int mahasiswaId, String mataKuliah, String semester, int nilai) {
+        this.id = id;
+        this.mahasiswaId = mahasiswaId;
+        this.mataKuliah = mataKuliah;
+        this.semester = semester;
+        this.nilai = nilai;
+    }
+    
+    // Getters and Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    
+    public int getMahasiswaId() { return mahasiswaId; }
+    public void setMahasiswaId(int mahasiswaId) { this.mahasiswaId = mahasiswaId; }
+    
+    public String getMataKuliah() { return mataKuliah; }
+    public void setMataKuliah(String mataKuliah) { this.mataKuliah = mataKuliah; }
+    
+    public String getSemester() { return semester; }
+    public void setSemester(String semester) { this.semester = semester; }
+    
+    public int getNilai() { return nilai; }
+    public void setNilai(int nilai) { this.nilai = nilai; }
+}
+```
+### **Penjelasan Kode: Mahasiswa.java dan Nilai.java**
+
+#### **Mahasiswa.java**
+
+`Mahasiswa` adalah model yang merepresentasikan data mahasiswa dalam aplikasi, seperti ID, NIM, nama, jurusan, dan angkatan. Class ini bertugas menyimpan informasi terkait mahasiswa yang nantinya akan dikelola dalam aplikasi.
+
+- **Atribut**:
+  - **`id`**: ID unik mahasiswa.
+  - **`nim`**: Nomor Induk Mahasiswa.
+  - **`nama`**: Nama mahasiswa.
+  - **`jurusan`**: Jurusan mahasiswa.
+  - **`angkatan`**: Tahun angkatan mahasiswa.
+
+- **Konstruktor**:
+  - Terdapat konstruktor default tanpa parameter dan konstruktor dengan parameter untuk inisialisasi data mahasiswa.
+
+- **Getter dan Setter**:
+  - Setiap atribut memiliki metode **getter** (untuk mengambil nilai) dan **setter** (untuk mengubah nilai) agar data dapat diakses dan dimodifikasi.
+
+#### **Nilai.java**
+
+`Nilai` adalah model yang merepresentasikan data nilai mahasiswa, termasuk ID, ID mahasiswa, mata kuliah, semester, dan nilai. Class ini bertanggung jawab untuk menyimpan informasi terkait nilai yang diperoleh oleh mahasiswa dalam setiap mata kuliah dan semester tertentu.
+
+- **Atribut**:
+  - **`id`**: ID unik nilai (untuk setiap record).
+  - **`mahasiswaId`**: ID mahasiswa yang nilai-nya disimpan.
+  - **`mataKuliah`**: Nama mata kuliah yang diambil.
+  - **`semester`**: Semester mata kuliah tersebut.
+  - **`nilai`**: Nilai yang diperoleh mahasiswa dalam mata kuliah tersebut.
+
+- **Konstruktor**:
+  - Konstruktor default tanpa parameter dan konstruktor dengan parameter untuk inisialisasi nilai mahasiswa.
+
+- **Getter dan Setter**:
+  - Sama seperti `Mahasiswa`, setiap atribut pada `Nilai` memiliki **getter** dan **setter** untuk memudahkan pengambilan dan perubahan data.
+
+#### **Tujuan**
+- **Mahasiswa** dan **Nilai** adalah **model** yang menyimpan data yang akan dikelola dalam aplikasi (misalnya, menambah, memperbarui, atau menghapus data).
+- Data ini digunakan oleh **controller** untuk memanipulasi data mahasiswa dan nilai, serta menampilkannya melalui **view**.
 
 # MahasiswaModel.java
 ``` Java
@@ -547,45 +716,6 @@ public class MahasiswaModel extends BaseModel<Mahasiswa> {
             return stmt.executeUpdate() > 0;
         }
     }
-}
-```
-
-# Nilai.java
-``` Java
-package model;
-
-public class Nilai {
-    private int id;
-    private int mahasiswaId;
-    private String mataKuliah;
-    private String semester;
-    private int nilai;
-    
-    public Nilai() {}
-    
-    public Nilai(int id, int mahasiswaId, String mataKuliah, String semester, int nilai) {
-        this.id = id;
-        this.mahasiswaId = mahasiswaId;
-        this.mataKuliah = mataKuliah;
-        this.semester = semester;
-        this.nilai = nilai;
-    }
-    
-    // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-    
-    public int getMahasiswaId() { return mahasiswaId; }
-    public void setMahasiswaId(int mahasiswaId) { this.mahasiswaId = mahasiswaId; }
-    
-    public String getMataKuliah() { return mataKuliah; }
-    public void setMataKuliah(String mataKuliah) { this.mataKuliah = mataKuliah; }
-    
-    public String getSemester() { return semester; }
-    public void setSemester(String semester) { this.semester = semester; }
-    
-    public int getNilai() { return nilai; }
-    public void setNilai(int nilai) { this.nilai = nilai; }
 }
 ```
 
@@ -687,6 +817,50 @@ public class NilaiModel extends BaseModel<Nilai> {
     }
 }
 ```
+### **Penjelasan Kode: MahasiswaModel.java dan NilaiModel.java**
+
+#### **MahasiswaModel.java**
+
+`MahasiswaModel` adalah **model** yang mengelola operasi database untuk entitas **Mahasiswa**. Model ini berfungsi untuk melakukan operasi CRUD (Create, Read, Update, Delete) pada tabel `mahasiswa` dalam database.
+
+- **Konstruktor**:
+  - Menerima objek `Connection` yang digunakan untuk berinteraksi dengan database.
+  
+- **RowMapper**:
+  - **Mapper** digunakan untuk mengubah hasil dari `ResultSet` menjadi objek `Mahasiswa`. Setiap baris yang diambil dari database akan dipetakan ke objek `Mahasiswa`.
+
+- **Metode**:
+  - **`findAll()`**: Mengambil seluruh data mahasiswa dari tabel `mahasiswa` dan mengembalikan daftar mahasiswa.
+  - **`findById(int id)`**: Mengambil data mahasiswa berdasarkan ID.
+  - **`insert(Mahasiswa mahasiswa)`**: Menambahkan data mahasiswa baru ke dalam tabel.
+  - **`update(Mahasiswa mahasiswa)`**: Memperbarui data mahasiswa berdasarkan ID.
+  - **`delete(int id)`**: Menghapus data mahasiswa berdasarkan ID.
+
+#### **NilaiModel.java**
+
+`NilaiModel` adalah **model** yang mengelola operasi database untuk entitas **Nilai**. Model ini digunakan untuk mengelola nilai yang diberikan kepada mahasiswa, termasuk operasi CRUD pada tabel `nilai` dalam database.
+
+- **Konstruktor**:
+  - Menerima objek `Connection` yang digunakan untuk berinteraksi dengan database.
+
+- **RowMapper**:
+  - **Mapper** digunakan untuk mengubah hasil dari `ResultSet` menjadi objek `Nilai`.
+
+- **Metode**:
+  - **`findAll()`**: Mengambil seluruh data nilai dari tabel `nilai` dan mengembalikan daftar nilai.
+  - **`findByMahasiswaId(int mahasiswaId)`**: Mengambil seluruh nilai mahasiswa berdasarkan `mahasiswa_id`. Ini memungkinkan pengambilan nilai berdasarkan mahasiswa tertentu.
+  - **`findById(int id)`**: Mengambil data nilai berdasarkan ID.
+  - **`insert(Nilai nilai)`**: Menambahkan data nilai baru untuk mahasiswa.
+  - **`update(Nilai nilai)`**: Memperbarui data nilai berdasarkan ID.
+  - **`delete(int id)`**: Menghapus data nilai berdasarkan ID.
+
+### **Perbedaan dan Tujuan**
+- **MahasiswaModel** mengelola data mahasiswa, sementara **NilaiModel** mengelola data nilai mahasiswa.
+- Kedua kelas ini mewarisi `BaseModel`, yang kemungkinan adalah kelas dasar dengan implementasi umum untuk akses database, seperti pembuatan koneksi atau eksekusi query.
+
+### **Fitur Umum**:
+- Keduanya memiliki **CRUD operations** (Create, Read, Update, Delete) untuk memanipulasi data mahasiswa dan nilai dalam database.
+- **RowMapper** digunakan untuk memetakan hasil query SQL menjadi objek Java, sehingga memudahkan pengolahan data.
 
 # FormMahasiswa.java
 ``` Java
@@ -1001,5 +1175,79 @@ public class FormNilai extends JDialog {
     }
 }
 ```
+### **Penjelasan Kode: FormMahasiswa.java dan FormNilai.java**
 
+### **FormMahasiswa.java**
+Form ini digunakan untuk mengelola data mahasiswa. Formulir ini memungkinkan pengguna untuk melakukan operasi CRUD (Create, Read, Update, Delete) pada data mahasiswa.
 
+#### Komponen Utama:
+- **JTextField** (`txtId`, `txtNim`, `txtNama`, `txtJurusan`, `txtAngkatan`): Digunakan untuk menginput detail mahasiswa seperti ID, NIM (nomor induk mahasiswa), nama, jurusan, dan angkatan.
+- **JButton** (`btnSave`, `btnDelete`, `btnClear`, `btnNilai`): Tombol untuk melakukan berbagai aksi, seperti menyimpan data mahasiswa, menghapus mahasiswa, membersihkan form, atau melihat nilai mahasiswa.
+- **JTable** (`tableMahasiswa`): Digunakan untuk menampilkan daftar mahasiswa.
+- **DefaultTableModel**: Digunakan untuk mengelola data dan struktur tabel.
+
+#### Fungsi Utama:
+- **addSaveListener**, **addDeleteListener**, **addClearListener**, **addNilaiListener**: Metode-metode ini digunakan untuk menambahkan listener yang menangani aksi pengguna seperti menyimpan mahasiswa baru, menghapus mahasiswa yang ada, membersihkan form, atau melihat nilai mahasiswa.
+- **getMahasiswa()**: Mengambil data mahasiswa dari field teks dan mengembalikannya dalam bentuk objek `Mahasiswa`. Jika ID kosong, akan diset ke nilai 0.
+- **setMahasiswas()**: Mengisi tabel mahasiswa dengan data mahasiswa yang diberikan. Ini akan mengupdate tabel dengan daftar mahasiswa yang diberikan.
+
+### **FormNilai.java**
+Form ini digunakan untuk mengelola nilai mahasiswa. Formulir ini memungkinkan pengguna untuk menambah, mengubah, dan menghapus nilai mahasiswa.
+
+#### Komponen Utama:
+- **JTextField** (`txtId`, `txtMataKuliah`, `txtSemester`, `txtNilai`): Digunakan untuk memasukkan data terkait nilai mahasiswa, seperti ID nilai, mata kuliah, semester, dan nilai yang diperoleh.
+- **JButton** (`btnSave`, `btnDelete`, `btnClear`): Tombol untuk menyimpan, menghapus, atau membersihkan form.
+- **JTable** (`tableNilai`): Tabel untuk menampilkan daftar nilai mahasiswa.
+- **DefaultTableModel**: Digunakan untuk mengelola data dan struktur tabel nilai mahasiswa.
+
+#### Fungsi Utama:
+- **setMahasiswaInfo()**: Menampilkan informasi mahasiswa di header dialog berdasarkan ID mahasiswa yang dipilih. Ini mengubah judul dialog dengan nama mahasiswa yang bersangkutan.
+- **getNilai()**: Mengambil data nilai dari field teks dan mengembalikannya dalam bentuk objek `Nilai`. Sebelum itu, dilakukan validasi input, seperti memastikan nilai di antara 0 hingga 100.
+- **setNilaiList()**: Mengisi tabel dengan daftar nilai mahasiswa.
+- **clearForm()**: Membersihkan semua field input dan menghapus seleksi pada tabel.
+- **addSaveListener**, **addDeleteListener**, **addClearListener**: Metode-metode ini menambahkan listener untuk menangani aksi pengguna seperti menyimpan nilai, menghapus nilai, atau membersihkan form.
+
+# Main.java
+``` Java
+import classes.Database;
+import controller.MahasiswaController;
+import java.sql.Connection;
+import model.MahasiswaModel;
+import view.FormMahasiswa;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            Connection connection = Database.getConnection();
+            MahasiswaModel model = new MahasiswaModel(connection);
+            FormMahasiswa view = new FormMahasiswa();
+            MahasiswaController controller = new MahasiswaController(model, view, connection);
+            
+            view.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+}
+```
+
+# TestConnection.java
+``` Java
+// TestConnection.java
+import classes.Database;
+import java.sql.Connection;
+
+public class TestConnection {
+    public static void main(String[] args) {
+        try {
+            Connection conn = Database.getConnection();
+            System.out.println("Koneksi berhasil!");
+            conn.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+```
